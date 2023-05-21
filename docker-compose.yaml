@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mysql:
+    container_name: mysql-docker
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: example
+    volumes:
+      - ./data:/var/lib/mysql
+
+  adminer:
+    container_name: adminer-docker
+    image: adminer
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+
+  spring-boot-mysql-docker:
+    container_name: spring-boot-mysql-docker
+    build: .
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: example
